@@ -11,7 +11,7 @@ import SwiftUI
 struct diet_ioApp: App {
     var body: some Scene {
         WindowGroup {
-            ContentView()
+            IntroView()
         }
     }
 }
