@@ -17,13 +17,21 @@ struct CustomTextField: View {
         Group {
             if isSecure {
                 SecureField(placeholder, text: $text)
+                    .frame(width: .infinity, height: 30)
             } else {
                 TextField(placeholder, text: $text)
+                    .frame(width: .infinity, height: 30)
+
+
             }
+            
         }
         .padding()
         .background(backgroundColor)
-        .cornerRadius(12)
-        .shadow(color: .gray.opacity(0.1), radius: 5)
+        .cornerRadius(10)
+        .shadow(color: .gray.opacity(0.3), radius: 5)
     }
+}
+#Preview {
+    LoginView()
 }

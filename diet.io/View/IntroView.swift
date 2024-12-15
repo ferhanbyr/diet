@@ -12,7 +12,7 @@ struct IntroView: View {
                     .frame(width: 300, height: 300)
                 
                 CustomButton(title: "Yeni bir kullanıcıyım", backgroundColor: Color("LoginGreen"), textColor: Color("LoginGreen2")) {
-                    // Handle new user action
+                    path.append("RegisterView")
                 }
                 
                 CustomButton(title: "Zaten bir hesabım var", backgroundColor: Color("LoginGreen2"), textColor: Color("LoginGreen")) {
@@ -24,6 +24,9 @@ struct IntroView: View {
             .navigationDestination(for: String.self) { route in
                 if route == "LoginView" {
                     LoginView()
+                }
+                else if route == "RegisterView" {
+                    RegisterView()
                 }
             }
         }

@@ -6,9 +6,14 @@
 //
 
 import SwiftUI
-
+import Firebase
 @main
 struct diet_ioApp: App {
+    
+    init() {
+         FirebaseApp.configure()
+     }
+    
     var body: some Scene {
         WindowGroup {
             IntroView()

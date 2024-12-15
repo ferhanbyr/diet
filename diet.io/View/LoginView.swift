@@ -1,6 +1,7 @@
 import SwiftUI
-
+import FirebaseAuth
 struct LoginView: View {
+    
     @State private var email = ""
     @State private var password = ""
     @Environment(\.dismiss) private var dismiss
@@ -44,10 +45,19 @@ struct LoginView: View {
                 
                 // Login Button
                 CustomButton(title: "Login",
-                            backgroundColor: Color("LoginGreen"),
-                            textColor: .white) {
-                    // Handle login
+                             backgroundColor: Color("LoginGreen"),
+                             textColor: .white) {
+                    FirebaseManager.shared.signInUser(email: email, password: password) { result in
+                        switch result {
+                        case .success:
+                            print("Login successful!")
+                        case .failure(let error):
+                            print("Failed to login: \(error.localizedDescription)")
+                        }
+                    }
                 }
+
+
                 
                 // Divider with text
                 HStack {
