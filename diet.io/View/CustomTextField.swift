@@ -9,27 +9,28 @@ import SwiftUI
 
 struct CustomTextField: View {
     @Binding var text: String
-    var placeholder: String
+    let placeholder: String
     var isSecure: Bool = false
-    var backgroundColor: Color
+    var backgroundColor: Color = .white
     
     var body: some View {
         Group {
             if isSecure {
                 SecureField(placeholder, text: $text)
-                    .frame(width: .infinity, height: 30)
             } else {
                 TextField(placeholder, text: $text)
-                    .frame(width: .infinity, height: 30)
-
-
             }
-            
         }
+        .textFieldStyle(.plain)
         .padding()
-        .background(backgroundColor)
-        .cornerRadius(10)
-        .shadow(color: .gray.opacity(0.3), radius: 5)
+        .frame(maxWidth: .infinity)
+        .frame(height: 50)
+        .background(
+            RoundedRectangle(cornerRadius: 12)
+                .fill(backgroundColor)
+                .shadow(color: .gray.opacity(0.2), radius: 5)
+        )
+        .textInputAutocapitalization(.never)
     }
 }
 #Preview {
