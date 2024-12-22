@@ -5,6 +5,9 @@ struct LoginView: View {
     @State private var email = ""
     @State private var password = ""
     @Environment(\.dismiss) private var dismiss
+    @State private var showRegister = false
+    @State private var isLoading = false
+    @State private var navigateToHome = false
     
     var body: some View {
         ScrollView {
@@ -19,8 +22,9 @@ struct LoginView: View {
                     .foregroundColor(.black)
                 
                 Text("welcome")
-                    .font(.title)
+                    .font(.custom("DynaPuff", size: 35))
                     .fontWeight(.medium)
+                    
                 
                 // Email TextField
                 CustomTextField(text: $email,
@@ -44,20 +48,29 @@ struct LoginView: View {
                 }
                 
                 // Login Button
-                CustomButton(title: "Login",
-                             backgroundColor: Color("LoginGreen"),
-                             textColor: .white) {
+                CustomButtonView(
+                    title: "Login",
+                    isLoading: isLoading,
+                    disabled: email.isEmpty || password.isEmpty,
+                    type: .primary
+                ) {
+                    isLoading = true
                     FirebaseManager.shared.signInUser(email: email, password: password) { result in
+                        isLoading = false
                         switch result {
                         case .success:
                             print("Login successful!")
+                            navigateToHome = true
                         case .failure(let error):
                             print("Failed to login: \(error.localizedDescription)")
                         }
                     }
                 }
-
-
+                
+                // NavigationLink for HomeView
+                NavigationLink(destination: HomeView(), isActive: $navigateToHome) {
+                    EmptyView()
+                }
                 
                 // Divider with text
                 HStack {
@@ -109,10 +122,8 @@ struct LoginView: View {
                 HStack {
                     Text("Not a member?")
                         .foregroundColor(.gray)
-                    Button("Register now") {
-                        // Handle register navigation
-                    }
-                    .foregroundColor(Color("LoginGreen"))
+                    NavigationLink("Register now", destination: RegisterView())
+                        .foregroundColor(Color("LoginGreen"))
                 }
                 
                 Spacer(minLength: 50)
@@ -121,12 +132,16 @@ struct LoginView: View {
         }
         .background(Color.gray.opacity(0.1))
         .navigationBarBackButtonHidden(true)
-        .navigationBarItems(leading: Button(action: {
-            dismiss()
-        }) {
-            Image(systemName: "chevron.left")
-                .foregroundColor(.gray)
-        })
+        .toolbar {
+            ToolbarItem(placement: .navigationBarLeading) {
+                Button(action: {
+                    dismiss()
+                }) {
+                    Image(systemName: "chevron.left")
+                        .foregroundColor(.gray)
+                }
+            }
+        }
     }
 }
 

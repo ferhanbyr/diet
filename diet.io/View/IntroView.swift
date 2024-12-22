@@ -1,39 +1,42 @@
 import SwiftUI
 
 struct IntroView: View {
-    @State private var path = NavigationPath()
+    @State private var showLogin = false
+    @State private var showRegister = false
     
     var body: some View {
-        NavigationStack(path: $path) {
+        NavigationStack {
             VStack(spacing: 20) {
                 Image("asd")
                     .resizable()
                     .scaledToFit()
                     .frame(width: 300, height: 300)
                 
-                CustomButton(title: "Yeni bir kullanıcıyım", backgroundColor: Color("LoginGreen"), textColor: Color("LoginGreen2")) {
-                    path.append("RegisterView")
+                CustomButtonView(
+                    title: "Yeni bir kullanıcıyım",
+                    type: .primary
+                ) {
+                    showRegister = true
                 }
                 
-                CustomButton(title: "Zaten bir hesabım var", backgroundColor: Color("LoginGreen2"), textColor: Color("LoginGreen")) {
-                    path.append("LoginView")
+                CustomButtonView(
+                    title: "Zaten bir hesabım var",
+                    type: .secondary
+                ) {
+                    showLogin = true
                 }
             }
             .padding()
             .background(Color.white)
-            .navigationDestination(for: String.self) { route in
-                if route == "LoginView" {
-                    LoginView()
-                }
-                else if route == "RegisterView" {
-                    RegisterView()
-                }
+            .navigationDestination(isPresented: $showRegister) {
+                RegisterView()
+            }
+            .navigationDestination(isPresented: $showLogin) {
+                LoginView()
             }
         }
     }
 }
-
-
 
 struct IntroView_Previews: PreviewProvider {
     static var previews: some View {
