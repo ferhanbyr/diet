@@ -7,13 +7,70 @@ struct HomeView: View {
     @State private var isTakingVitaminB12 = false
     @State private var showChatbot = false
     @State private var showBubble = true
+    @State private var selectedTab = 0
     
     var body: some View {
+        TabView(selection: $selectedTab) {
+            // Ana sayfa içeriği
+            mainContent
+                .tag(0)
+            
+            // Yemekler sayfası
+            Text("Yemekler")
+                .tag(1)
+            
+            // Aktivite sayfası
+            Text("Aktivite")
+                .tag(2)
+            
+            // İstatistik sayfası
+            Text("İstatistik")
+                .tag(3)
+            
+            // Diyetisyenler sayfası
+            DietitianView()
+                .tag(4)
+        }
+        .overlay(
+            TabBarView(selectedTab: $selectedTab)
+                .ignoresSafeArea(.keyboard), 
+            alignment: .bottom
+        )
+    }
+    
+    // Ana sayfa içeriği
+    private var mainContent: some View {
         ZStack(alignment: .bottom) {
             Color("BrokoliAcik").opacity(0.3).ignoresSafeArea()
             
             ScrollView(showsIndicators: false) {
-                VStack(spacing: 25) {
+                VStack(spacing: 15) {
+                    // Kullanıcı Profili
+                    HStack {
+                        Button(action: {
+                            // Profil sayfasına git
+                        }) {
+                            HStack(spacing: 10) {
+                                Image(systemName: "person.circle.fill")
+                                    .font(.system(size: 40))
+                                    .foregroundColor(Color("BrokoliKoyu"))
+                                
+                                VStack(alignment: .leading, spacing: 2) {
+                                    Text("Hoş geldin,")
+                                        .font(.custom("DynaPuff", size: 14))
+                                        .foregroundColor(.gray)
+                                    Text("Kullanıcı Adı")
+                                        .font(.custom("DynaPuff", size: 16))
+                                        .foregroundColor(.black)
+                                }
+                            }
+                        }
+                        
+                        Spacer()
+                    }
+                    .padding(.horizontal)
+                    .padding(.top)
+                    
                     // Brokoli Karakter ve Konuşma Balonu
                     ZStack(alignment: .topTrailing) {
                         CalorieCard(
@@ -24,7 +81,7 @@ struct HomeView: View {
                         
                         if showBubble {
                             SpeechBubble(message: getBrokoliMessage())
-                                .offset(x: -50, y: -60)
+                                .offset(x: 10, y: -50)
                                 .zIndex(1)
                         }
                         
@@ -34,7 +91,7 @@ struct HomeView: View {
                             Image("brokoli")
                                 .resizable()
                                 .frame(width: 120, height: 250)
-                                .offset(x: -20, y: -40)
+                                .offset(x: 10, y: -50)
                         }
                     }
                     
@@ -62,8 +119,7 @@ struct HomeView: View {
             }
             
             // Tab Bar - En altta sabit
-            TabBarView()
-                .ignoresSafeArea(.keyboard)
+            TabBarView(selectedTab: $selectedTab)
         }
         .ignoresSafeArea(.all, edges: .bottom)
         .sheet(isPresented: $showChatbot) {
@@ -455,37 +511,74 @@ struct TimePickerView: View {
 }
 
 struct TabBarView: View {
+    @Binding var selectedTab: Int
+    
     var body: some View {
         HStack(spacing: 0) {
             TabBarButton(
-                image: "person.fill",
-                title: "Profil",
-                isSelected: true
-            )
+                image: "house.fill",
+                title: "Ana Sayfa",
+                isSelected: selectedTab == 0
+            ) {
+                selectedTab = 0
+            }
             
             TabBarButton(
                 image: "fork.knife",
                 title: "Yemekler",
-                isSelected: false
-            )
+                isSelected: selectedTab == 1
+            ) {
+                selectedTab = 1
+            }
             
             TabBarButton(
-                image: "list.bullet",
-                title: "Menü",
-                isSelected: false
-            )
+                image: "figure.run",
+                title: "Aktivite",
+                isSelected: selectedTab == 2
+            ) {
+                selectedTab = 2
+            }
             
             TabBarButton(
                 image: "chart.bar.fill",
                 title: "İstatistik",
-                isSelected: false
-            )
+                isSelected: selectedTab == 3
+            ) {
+                selectedTab = 3
+            }
+            
+            TabBarButton(
+                image: "stethoscope",
+                title: "Diyetisyen",
+                isSelected: selectedTab == 4
+            ) {
+                selectedTab = 4
+            }
         }
-        .padding(.top, 15)
-        .padding(.bottom, 15)
+        .padding(.vertical, 15)
         .background(Color.white)
         .cornerRadius(25, corners: [.topLeft, .topRight])
         .shadow(color: .gray.opacity(0.2), radius: 5, y: -5)
+    }
+}
+
+struct TabBarButton: View {
+    let image: String
+    let title: String
+    let isSelected: Bool
+    let action: () -> Void
+    
+    var body: some View {
+        Button(action: action) {
+            VStack(spacing: 8) {
+                Image(systemName: image)
+                    .font(.system(size: 24))
+                Text(title)
+                    .font(.custom("DynaPuff", size: 12))
+            }
+            .foregroundColor(isSelected ? Color("BrokoliKoyu") : .gray)
+            .frame(maxWidth: .infinity)
+        }
     }
 }
 
@@ -538,23 +631,6 @@ struct MealButton: View {
         .sheet(isPresented: $showAddMeal) {
             AddMealView(viewModel: viewModel, mealType: mealType)
         }
-    }
-}
-
-struct TabBarButton: View {
-    let image: String
-    let title: String
-    let isSelected: Bool
-    
-    var body: some View {
-        VStack(spacing: 8) {
-            Image(systemName: image)
-                .font(.system(size: 24))
-            Text(title)
-                .font(.custom("DynaPuff", size: 12))
-        }
-        .foregroundColor(isSelected ? Color("BrokoliKoyu") : .gray)
-        .frame(maxWidth: .infinity)
     }
 }
 
