@@ -9,14 +9,16 @@ import SwiftUI
 import Firebase
 @main
 struct diet_ioApp: App {
+    @StateObject private var authViewModel = AuthViewModel()
     
     init() {
-         FirebaseApp.configure()
-     }
+        FirebaseApp.configure()
+    }
     
     var body: some Scene {
         WindowGroup {
-            IntroView()
+            ContentView()
+                .environmentObject(authViewModel)
         }
     }
 }
