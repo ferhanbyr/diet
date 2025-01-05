@@ -12,7 +12,7 @@ struct GenderSelectionView: View {
     @ObservedObject var viewModel: OnboardingViewModel
     
     var body: some View {
-        VStack(spacing: 30) {
+        VStack(spacing: 20) {
             ProgressBarView(progress: viewModel.progressValue, color: viewModel.selectedTheme.primary)
                 .frame(height: 10)
                 .padding(.horizontal)
@@ -20,7 +20,7 @@ struct GenderSelectionView: View {
             Image(viewModel.selectedTheme.image)
                 .resizable()
                 .scaledToFit()
-                .frame(width: 200, height: 300)
+                .frame(width: 100, height: 300)
             
             Text("Cinsiyetiniz ne?")
                 .font(.title2)
