@@ -4,36 +4,35 @@ import UserNotifications
 class WaterReminderManager {
     static let shared = WaterReminderManager()
     
-    private let reminderInterval: TimeInterval = 2 * 60 * 60 // 2 saat
+    private init() {}
     
-    func scheduleNextReminder() {
+    func scheduleReminders() {
+        // Mevcut hatırlatıcıları temizle
+        UNUserNotificationCenter.current().removeAllPendingNotificationRequests()
+        
+        // Yeni hatırlatıcılar ekle
         let content = UNMutableNotificationContent()
-        content.title = "Su İçme Vakti! 💧"
-        content.body = "Sağlıklı kalmak için su içmeyi unutma!"
+        content.title = "Su İçme Zamanı"
+        content.body = "Su içmeyi unutmayın!"
         content.sound = .default
         
-        // Bir sonraki hatırlatma için trigger
-        let trigger = UNTimeIntervalNotificationTrigger(
-            timeInterval: reminderInterval,
-            repeats: false
-        )
+        let interval = UserDefaults.standard.integer(forKey: "waterReminderInterval") * 60
+        let validInterval = max(interval, 60) // Minimum 60 saniye kontrolü
         
-        let request = UNNotificationRequest(
-            identifier: "water_reminder",
-            content: content,
-            trigger: trigger
-        )
+        let trigger = UNTimeIntervalNotificationTrigger(timeInterval: TimeInterval(validInterval), repeats: true)
         
-        UNUserNotificationCenter.current().add(request) { error in
-            if let error = error {
-                print("Su hatırlatıcısı oluşturma hatası: \(error.localizedDescription)")
-            }
-        }
+        let request = UNNotificationRequest(identifier: "waterReminder", content: content, trigger: trigger)
+        UNUserNotificationCenter.current().add(request)
     }
     
-    func cancelReminders() {
-        UNUserNotificationCenter.current().removePendingNotificationRequests(
-            withIdentifiers: ["water_reminder"]
-        )
+    func updateSettings(isEnabled: Bool, interval: Int) {
+        UserDefaults.standard.set(isEnabled, forKey: "waterReminderEnabled")
+        UserDefaults.standard.set(interval, forKey: "waterReminderInterval")
+        
+        if isEnabled {
+            scheduleReminders()
+        } else {
+            UNUserNotificationCenter.current().removeAllPendingNotificationRequests()
+        }
     }
 } 
