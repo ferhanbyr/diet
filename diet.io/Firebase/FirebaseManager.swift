@@ -15,7 +15,7 @@ class FirebaseManager {
     private init() {}
 
     let auth = Auth.auth() // 'private' yerine 'internal' oldu
-    private let db = Firestore.firestore()
+    let db = Firestore.firestore()
 
 
     // Kullanıcı Girişi
@@ -30,6 +30,9 @@ class FirebaseManager {
                 completion(.failure(NSError(domain: "", code: -1, userInfo: [NSLocalizedDescriptionKey: "User ID not found"])))
                 return
             }
+            
+            // Kullanıcı ID'sini UserDefaults'a kaydet
+            UserDefaults.standard.set(userId, forKey: "userId")
             
             // Kullanıcı verilerini Firestore'dan çek
             self?.fetchUserData(userId: userId) { result in
@@ -75,15 +78,21 @@ class FirebaseManager {
                 completion(.failure(NSError(domain: "", code: -1, userInfo: [NSLocalizedDescriptionKey: "User ID not found"])))
                 return
             }
+            
             // Kullanıcı Firestore'a kaydediliyor
-            self.db.collection("users").document(userId).setData([
+            let userData: [String: Any] = [
                 "email": email,
-                "userName": userName,
+                "userName": userName,  // userName'i kaydet
+                "name": userName,      // name olarak da kaydet (uyumluluk için)
                 "createdAt": Timestamp()
-            ]) { error in
+            ]
+            
+            self.db.collection("users").document(userId).setData(userData) { error in
                 if let error = error {
                     completion(.failure(error))
                 } else {
+                    // Kullanıcı verilerini UserDefaults'a kaydet
+                    UserDefaults.standard.set(userName, forKey: "userName")
                     completion(.success(()))
                 }
             }
