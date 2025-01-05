@@ -3,6 +3,7 @@ import SwiftUI
 struct IntroView: View {
     @State private var showLogin = false
     @State private var showRegister = false
+    @State private var navigateToHome = false
     
     var body: some View {
         NavigationStack {
@@ -25,6 +26,21 @@ struct IntroView: View {
                 ) {
                     showLogin = true
                 }
+                
+                Button(action: {
+                    completeRegistration()
+                }) {
+                    Text("Kayıt Ol")
+                        .font(.headline)
+                        .padding()
+                        .background(Color.blue)
+                        .foregroundColor(.white)
+                        .cornerRadius(10)
+                }
+                
+                NavigationLink(destination: HomeView(), isActive: $navigateToHome) {
+                    EmptyView()
+                }
             }
             .padding()
             .background(Color.white)
@@ -35,6 +51,10 @@ struct IntroView: View {
                 LoginView()
             }
         }
+    }
+    
+    private func completeRegistration() {
+        navigateToHome = true
     }
 }
 

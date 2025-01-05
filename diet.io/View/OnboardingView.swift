@@ -12,24 +12,21 @@ struct OnboardingView: View {
     @StateObject private var viewModel = OnboardingViewModel()
     
     var body: some View {
-        VStack {
+        ZStack {
             switch viewModel.currentStep {
             case .choice:
                 ChoiceView(viewModel: viewModel)
             case .gender:
                 GenderSelectionView(viewModel: viewModel)
-            case .weightGoal:
-                WeightGoalView(viewModel: viewModel)
             case .birthday:
                 BirthdayInputView(viewModel: viewModel)
             case .activity:
-                ActivityView(viewModel: viewModel)
+                ActivitySelection(viewModel: viewModel)
+            case .completed:
+                HomeView()
             }
         }
-        .transition(.slide)
-        .animation(.easeInOut, value: viewModel.currentStep)
-        .navigationBarBackButtonHidden(true)
-        .navigationBarHidden(true)
+        .ignoresSafeArea(.all)
     }
 }
 

@@ -2,12 +2,12 @@ import SwiftUI
 import FirebaseAuth
 struct LoginView: View {
     
+    @EnvironmentObject var authViewModel: AuthViewModel
     @State private var email = ""
     @State private var password = ""
     @Environment(\.dismiss) private var dismiss
     @State private var showRegister = false
     @State private var isLoading = false
-    @State private var navigateToHome = false
     
     var body: some View {
         ScrollView {
@@ -37,6 +37,10 @@ struct LoginView: View {
                                placeholder: "Password",
                                isSecure: true,
                                backgroundColor: .white)
+                    .textFieldStyle(RoundedBorderTextFieldStyle())
+                    .autocapitalization(.none)
+                    .textContentType(.oneTimeCode)
+                    .disableAutocorrection(true)
                 
                 // Forgot Password Link
                 Button(action: {
@@ -60,16 +64,13 @@ struct LoginView: View {
                         switch result {
                         case .success:
                             print("Login successful!")
-                            navigateToHome = true
+                            DispatchQueue.main.async {
+                                authViewModel.isLoggedIn = true
+                            }
                         case .failure(let error):
                             print("Failed to login: \(error.localizedDescription)")
                         }
                     }
-                }
-                
-                // NavigationLink for HomeView
-                NavigationLink(destination: HomeView(), isActive: $navigateToHome) {
-                    EmptyView()
                 }
                 
                 // Divider with text
