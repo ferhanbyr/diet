@@ -34,8 +34,8 @@ struct ChoiceView: View {
                     Image("brokoli")
                         .resizable()
                         .scaledToFit()
-                        .frame(height: 250)
-                        .offset(x: 20)
+                        .frame(height: 100)
+                        .offset(x: -15)
                 }
                 .frame(maxWidth: .infinity)
                 .frame(height: 80)
