@@ -4,7 +4,7 @@ import Foundation
 struct AddMealView: View {
     @Environment(\.dismiss) var dismiss
     @ObservedObject var viewModel: HomeViewModel
-    let mealType: Meal.MealType
+    let mealType: DietMeal.MealType
     
     @State private var name = ""
     @State private var calories = ""
@@ -36,7 +36,7 @@ struct AddMealView: View {
                         .font(.custom("DynaPuff", size: 16))
                 }
             }
-            .navigationTitle("\(mealType.title) Ekle")
+            .navigationTitle("\(mealType.rawValue) Ekle")
             .navigationBarTitleDisplayMode(.inline)
             .navigationBarItems(
                 leading: Button("İptal") {
@@ -51,18 +51,33 @@ struct AddMealView: View {
     }
     
     private func saveMeal() {
-        let meal = Meal(
+        guard let caloriesDouble = Double(calories),
+              let proteinDouble = Double(protein),
+              let fatDouble = Double(fat),
+              let carbsDouble = Double(carbs) else {
+            print("Error converting values to Double")
+            return
+        }
+        
+        let meal = DietMeal(
             id: UUID().uuidString,
             name: name,
-            calories: Double(calories) ?? 0,
-            protein: Double(protein) ?? 0,
-            fat: Double(fat) ?? 0,
-            carbs: Double(carbs) ?? 0,
+            calories: caloriesDouble,
+            protein: proteinDouble,
+            fat: fatDouble,
+            carbs: carbsDouble,
             mealType: mealType,
             date: Date()
         )
         
         viewModel.addMeal(meal)
         dismiss()
+    }
+}
+
+// Preview Provider
+struct AddMealView_Previews: PreviewProvider {
+    static var previews: some View {
+        AddMealView(viewModel: HomeViewModel(), mealType: .breakfast)
     }
 } 
