@@ -10,46 +10,50 @@ struct LoginView: View {
     @State private var isLoading = false
     
     var body: some View {
-        ScrollView {
-            VStack(spacing: 20) {
-                Spacer(minLength: 50)
-                
-                // Lock Icon
-                Image(systemName: "lock.fill")
-                    .resizable()
-                    .scaledToFit()
-                    .frame(width: 50, height: 50)
-                    .foregroundColor(.black)
-                
-                Text("welcome")
-                    .font(.custom("DynaPuff", size: 35))
-                    .fontWeight(.medium)
+        ScrollView(showsIndicators: false) {
+            VStack(spacing: 16) {
+                VStack(spacing: 8) {
+                    Image("intro")
+                        .resizable()
+                        .scaledToFit()
+                        .frame(width: 220, height: 220)
                     
-                
-                // Email TextField
-                CustomTextField(text: $email,
-                               placeholder: "Email",
-                               backgroundColor: .white)
-                    .textInputAutocapitalization(.never)
-                
-                // Password TextField
-                CustomTextField(text: $password,
-                               placeholder: "Password",
-                               isSecure: true,
-                               backgroundColor: .white)
-                    .textFieldStyle(RoundedBorderTextFieldStyle())
-                    .autocapitalization(.none)
-                    .textContentType(.oneTimeCode)
-                    .disableAutocorrection(true)
-                
-                // Forgot Password Link
-                Button(action: {
-                    // Handle forgot password
-                }) {
-                    Text("Forgot Password?")
-                        .foregroundColor(.gray)
-                        
+                    Text("welcome")
+                        .font(.custom("DynaPuff", size: 32))
+                        .fontWeight(.medium)
                 }
+                .padding(.top, 20)
+                
+                VStack(spacing: 16) {
+                    // Email TextField
+                    CustomTextField(text: $email,
+                                  placeholder: "Email",
+                                  backgroundColor: .white)
+                        .textInputAutocapitalization(.never)
+                    
+                    // Password TextField
+                    CustomTextField(text: $password,
+                                  placeholder: "Password",
+                                  isSecure: true,
+                                  backgroundColor: .white)
+                        .textFieldStyle(RoundedBorderTextFieldStyle())
+                        .autocapitalization(.none)
+                        .textContentType(.oneTimeCode)
+                        .disableAutocorrection(true)
+                    
+                    // Forgot Password Link
+                    HStack {
+                        Spacer()
+                        Button(action: {
+                            // Handle forgot password
+                        }) {
+                            Text("Forgot Password?")
+                                .foregroundColor(.gray)
+                                .font(.footnote)
+                        }
+                    }
+                }
+                .padding(.top, 20)
                 
                 // Login Button
                 CustomButtonView(
@@ -72,8 +76,9 @@ struct LoginView: View {
                         }
                     }
                 }
+                .padding(.top, 8)
                 
-                // Divider with text
+                // Divider
                 HStack {
                     Rectangle()
                         .frame(height: 1)
@@ -85,6 +90,7 @@ struct LoginView: View {
                         .frame(height: 1)
                         .foregroundColor(.gray.opacity(0.3))
                 }
+                .padding(.vertical, 16)
                 
                 // Social Login Buttons
                 HStack(spacing: 20) {
@@ -94,7 +100,7 @@ struct LoginView: View {
                         Image("google")
                             .resizable()
                             .scaledToFit()
-                            .frame(width: 40, height: 40)
+                            .frame(width: 30, height: 30)
                             .padding()
                             .background(
                                 RoundedRectangle(cornerRadius: 12)
@@ -109,7 +115,7 @@ struct LoginView: View {
                         Image(systemName: "apple.logo")
                             .resizable()
                             .scaledToFit()
-                            .frame(width: 40, height: 40)
+                            .frame(width: 30, height: 30)
                             .padding()
                             .background(
                                 RoundedRectangle(cornerRadius: 12)
@@ -126,10 +132,10 @@ struct LoginView: View {
                     NavigationLink("Register now", destination: RegisterView())
                         .foregroundColor(Color("LoginGreen"))
                 }
-                
-                Spacer(minLength: 50)
+                .padding(.top, 16)
             }
-            .padding()
+            .padding(.horizontal)
+            .padding(.bottom, 20)
         }
         .background(Color.gray.opacity(0.1))
         .navigationBarBackButtonHidden(true)

@@ -22,11 +22,10 @@ struct RegisterView: View {
                 Spacer(minLength: 50)
                 
                 // Lock Icon
-                Image(systemName: "lock.fill")
+                Image("intro")
                     .resizable()
                     .scaledToFit()
-                    .frame(width: 50, height: 50)
-                    .foregroundColor(.black)
+                    .frame(width: 150, height: 150)
                 
                 Text("welcome")
                     .font(.custom("DynaPuff", size: 35))

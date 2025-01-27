@@ -33,6 +33,7 @@ enum DietGoal: String, Codable, CaseIterable {
 struct UserProfile: Codable {
     var id: String
     var name: String
+    var email: String
     var age: Int
     var height: Double
     var weight: Double
@@ -41,10 +42,29 @@ struct UserProfile: Codable {
     var activityLevel: ActivityLevel
     var gender: Gender
     var dailyCalorieGoal: Double
+    var bmiValue: Double
     
     var bmi: Double {
+        get { return bmiValue }
+        set { bmiValue = newValue }
+    }
+    
+    init(id: String, name: String, email: String, age: Int, height: Double, weight: Double, targetWeight: Double, 
+         dietGoal: DietGoal, activityLevel: ActivityLevel, gender: Gender, dailyCalorieGoal: Double) {
+        self.id = id
+        self.name = name
+        self.email = email
+        self.age = age
+        self.height = height
+        self.weight = weight
+        self.targetWeight = targetWeight
+        self.dietGoal = dietGoal
+        self.activityLevel = activityLevel
+        self.gender = gender
+        self.dailyCalorieGoal = dailyCalorieGoal
+        
         let heightInMeters = height / 100
-        return weight / (heightInMeters * heightInMeters)
+        self.bmiValue = weight / (heightInMeters * heightInMeters)
     }
 }
 

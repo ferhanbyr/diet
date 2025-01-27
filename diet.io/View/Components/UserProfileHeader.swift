@@ -1,7 +1,7 @@
 import SwiftUI
 
 struct UserProfileHeader: View {
-    let userName: String
+    @ObservedObject var viewModel: HomeViewModel
     
     var body: some View {
         HStack {
@@ -9,7 +9,7 @@ struct UserProfileHeader: View {
                 Text("Hoş geldin,")
                     .font(.custom("DynaPuff", size: 14))
                     .foregroundColor(.gray)
-                Text(userName)
+                Text("Ferhan Bayır")
                     .font(.custom("DynaPuff", size: 20))
                     .foregroundColor(.black)
             }

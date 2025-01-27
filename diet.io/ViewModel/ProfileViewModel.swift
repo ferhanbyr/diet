@@ -10,7 +10,8 @@ class ProfileViewModel: ObservableObject {
     private let db = Firestore.firestore()
     
     func fetchProfile() {
-        guard let userId = FirebaseManager.shared.auth.currentUser?.uid else { return }
+        guard let userId = FirebaseManager.shared.auth.currentUser?.uid,
+              let userEmail = FirebaseManager.shared.auth.currentUser?.email else { return }
         isLoading = true
         
         db.collection("users").document(userId).getDocument { [weak self] document, error in
@@ -19,12 +20,32 @@ class ProfileViewModel: ObservableObject {
                 
                 if let error = error {
                     self?.errorMessage = error.localizedDescription
+                    print("Firestore okuma hatası: \(error.localizedDescription)")
                     return
                 }
                 
-                if let document = document, document.exists,
-                   let profile = try? document.data(as: UserProfile.self) {
-                    self?.userProfile = profile
+                if let document = document, document.exists {
+                    do {
+                        let data = document.data() ?? [:]
+                        let profile = UserProfile(
+                            id: data["id"] as? String ?? "",
+                            name: data["name"] as? String ?? "",
+                            email: data["email"] as? String ?? userEmail,
+                            age: data["age"] as? Int ?? 0,
+                            height: data["height"] as? Double ?? 0,
+                            weight: data["weight"] as? Double ?? 0,
+                            targetWeight: data["targetWeight"] as? Double ?? 0,
+                            dietGoal: DietGoal(rawValue: data["dietGoal"] as? String ?? "") ?? .maintenance,
+                            activityLevel: ActivityLevel(rawValue: data["activityLevel"] as? String ?? "") ?? .sedentary,
+                            gender: Gender(rawValue: data["gender"] as? String ?? "") ?? .male,
+                            dailyCalorieGoal: data["dailyCalorieGoal"] as? Double ?? 0
+                        )
+                        self?.userProfile = profile
+                        print("Profil başarıyla yüklendi")
+                    } catch {
+                        self?.errorMessage = error.localizedDescription
+                        print("Profil dönüştürme hatası: \(error.localizedDescription)")
+                    }
                 }
             }
         }
@@ -34,24 +55,51 @@ class ProfileViewModel: ObservableObject {
         guard let userId = FirebaseManager.shared.auth.currentUser?.uid else { return }
         isLoading = true
         
-        do {
-            try db.collection("users").document(userId).setData(from: profile) { [weak self] error in
-                DispatchQueue.main.async {
-                    self?.isLoading = false
-                    if let error = error {
-                        self?.errorMessage = error.localizedDescription
-                    } else {
-                        self?.userProfile = profile
-                        ThemeManager.shared.updateTheme(for: profile.dietGoal)
-                    }
+        var updatedProfile = calculateBMIAndCalories(for: profile)
+        updatedProfile.email = FirebaseManager.shared.auth.currentUser?.email ?? ""
+        
+        let profileData: [String: Any] = [
+            "id": updatedProfile.id,
+            "name": updatedProfile.name,
+            "email": updatedProfile.email,
+            "age": updatedProfile.age,
+            "height": updatedProfile.height,
+            "weight": updatedProfile.weight,
+            "targetWeight": updatedProfile.targetWeight,
+            "dietGoal": updatedProfile.dietGoal.rawValue,
+            "activityLevel": updatedProfile.activityLevel.rawValue,
+            "gender": updatedProfile.gender.rawValue,
+            "dailyCalorieGoal": updatedProfile.dailyCalorieGoal,
+            "bmiValue": updatedProfile.bmiValue
+        ]
+        
+        db.collection("users").document(userId).setData(profileData) { [weak self] error in
+            DispatchQueue.main.async {
+                self?.isLoading = false
+                
+                if let error = error {
+                    self?.errorMessage = error.localizedDescription
+                    print("Firestore kayıt hatası: \(error.localizedDescription)")
+                } else {
+                    self?.userProfile = updatedProfile
+                    ThemeManager.shared.updateTheme(for: updatedProfile.dietGoal)
+                    print("Profil başarıyla güncellendi")
                 }
             }
-        } catch {
-            DispatchQueue.main.async {
-                self.isLoading = false
-                self.errorMessage = error.localizedDescription
-            }
         }
+    }
+    
+    private func calculateBMIAndCalories(for profile: UserProfile) -> UserProfile {
+        var updatedProfile = profile
+        
+        // BMI hesaplama
+        let heightInMeters = profile.height / 100
+        updatedProfile.bmiValue = profile.weight / (heightInMeters * heightInMeters)
+        
+        // Günlük kalori hesaplama
+        updatedProfile.dailyCalorieGoal = calculateDailyCalories(for: profile)
+        
+        return updatedProfile
     }
     
     func calculateDailyCalories(for profile: UserProfile) -> Double {
