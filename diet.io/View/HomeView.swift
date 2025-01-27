@@ -5,6 +5,8 @@ struct HomeView: View {
     @State private var selectedTab = 0
     @State private var showAddMeal = false
     @State private var selectedMealType: DietMeal.MealType?
+    @EnvironmentObject var themeManager: ThemeManager
+
     
     init() {
         UITabBar.appearance().unselectedItemTintColor = UIColor.gray
@@ -55,12 +57,15 @@ struct HomeView: View {
             }
         }
         .accentColor(.brokoliKoyu)
+        .onAppear {
+            viewModel.fetchUserData()
+        }
     }
     
     private var mainContent: some View {
         ScrollView(showsIndicators: false) {
             VStack(spacing: 25) {
-                UserProfileHeader(userName: viewModel.userName)
+                UserProfileHeader(viewModel: viewModel)
                 
                 CalorieCard(
                     burnedCalories: viewModel.burnedCalories,

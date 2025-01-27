@@ -501,4 +501,19 @@ class HomeViewModel: ObservableObject {
                 }
         }
     }
+    
+    @Published var userProfile: UserProfile?
+    
+    func fetchUserData() {
+        guard let userId = FirebaseManager.shared.auth.currentUser?.uid else { return }
+        
+        db.collection("users").document(userId).getDocument { [weak self] document, error in
+            if let document = document, document.exists,
+               let profile = try? document.data(as: UserProfile.self) {
+                DispatchQueue.main.async {
+                    self?.userProfile = profile
+                }
+            }
+        }
+    }
 } 

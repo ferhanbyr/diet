@@ -22,6 +22,7 @@ struct CustomTextField: View {
             }
         }
         .textFieldStyle(.plain)
+        .textContentType(.none)
         .padding()
         .frame(maxWidth: .infinity)
         .frame(height: 50)
