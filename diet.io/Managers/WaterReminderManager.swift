@@ -16,8 +16,8 @@ class WaterReminderManager {
         content.body = "Su içmeyi unutmayın!"
         content.sound = .default
         
-        let interval = UserDefaults.standard.integer(forKey: "waterReminderInterval") * 60
-        let validInterval = max(interval, 60) // Minimum 60 saniye kontrolü
+        let interval = UserDefaults.standard.integer(forKey: "waterReminderInterval") * 14440
+        let validInterval = max(interval, 14400) // Minimum 60 saniye kontrolü
         
         let trigger = UNTimeIntervalNotificationTrigger(timeInterval: TimeInterval(validInterval), repeats: true)
         

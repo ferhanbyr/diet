@@ -65,14 +65,14 @@ struct WaterButton: View {
         }) {
             VStack(spacing: 5) {
                 Image(systemName: "drop.fill")
-                    .foregroundColor(Color("BrokoliKoyu"))
+                    .foregroundColor(Color(.systemBlue))
                 Text("\(amount)ml")
                     .font(.custom("DynaPuff", size: 12))
                     .foregroundColor(.black)
             }
             .frame(maxWidth: .infinity)
             .padding(.vertical, 10)
-            .background(Color("BrokoliKoyu").opacity(0.1))
+            .background(Color(.systemBlue).opacity(0.1))
             .cornerRadius(10)
         }
     }
@@ -87,16 +87,16 @@ struct WaterWaveView: View {
             ZStack {
                 // Arka plan
                 Circle()
-                    .fill(Color("BrokoliKoyu").opacity(0.1))
+                    .fill(Color(.systemBlue).opacity(0.1))
                 
                 // Su dalgası
                 WaterWave(progress: progress, waveHeight: 0.015, offset: waveOffset)
-                    .fill(Color("BrokoliKoyu").opacity(0.3))
+                    .fill(Color(.white))
                     .clipShape(Circle())
                 
                 // İkinci dalga (efekt için)
                 WaterWave(progress: progress, waveHeight: 0.02, offset: waveOffset)
-                    .fill(Color("BrokoliKoyu").opacity(0.5))
+                    .fill(Color(.systemBlue))
                     .clipShape(Circle())
                 
                 // Miktar göstergesi
